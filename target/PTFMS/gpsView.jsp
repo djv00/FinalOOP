@@ -3,45 +3,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GPS View - Vehicle Tracking</title>
+    <meta charset="UTF-8">
+    <title>GPS Tracking Report</title>
 </head>
 <body>
-    <h2>Vehicle GPS Logs</h2>
+    <h2>Vehicle GPS Tracking Report</h2>
 
-    <form action="GpsServlet" method="get">
+    <c:if test="${not empty error}">
+        <p style="color:red">${error}</p>
+    </c:if>
+
+    <form method="get" action="controller">
+        <input type="hidden" name="action" value="gpsReport" />
         <label for="vehicleId">Enter Vehicle ID:</label>
-        <input type="number" name="vehicleId" id="vehicleId" required />
-        <input type="submit" value="View Logs" />
+        <input type="number" name="vehicleId" required />
+        <button type="submit">View Logs</button>
     </form>
 
     <c:if test="${not empty logs}">
-        <h3>GPS Logs for Vehicle ID: ${param.vehicleId}</h3>
         <table border="1">
-            <tr>
-                <th>Timestamp</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Station</th>
-                <th>Arrival</th>
-                <th>Departure</th>
-                <th>Final Station</th>
-            </tr>
-            <c:forEach var="log" items="${logs}">
+            <thead>
                 <tr>
-                    <td><c:out value="${log.timestamp}"/></td>
-                    <td><c:out value="${log.latitude}"/></td>
-                    <td><c:out value="${log.longitude}"/></td>
-                    <td><c:out value="${log.stationName}"/></td>
-                    <td><c:out value="${log.arrivalTime}"/></td>
-                    <td><c:out value="${log.departureTime}"/></td>
-                    <td><c:out value="${log.atFinalStation}"/></td>
+                    <th>Station</th>
+                    <th>Arrival Time</th>
+                    <th>Departure Time</th>
+                    <th>At Final Station?</th>
+                    <th>Timestamp</th>
                 </tr>
-            </c:forEach>
+            </thead>
+            <tbody>
+                <c:forEach var="log" items="${logs}">
+                    <tr>
+                        <td>${log.stationName}</td>
+                        <td>${log.arrivalTime}</td>
+                        <td>${log.departureTime}</td>
+                        <td><c:out value="${log.atFinalStation ? 'Yes' : 'No'}" /></td>
+                        <td>${log.timestamp}</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
         </table>
     </c:if>
 
-    <c:if test="${empty logs && not empty param.vehicleId}">
-        <p>No GPS logs found for vehicle ID: ${param.vehicleId}</p>
-    </c:if>
+    <p><a href="controller?action=managerHome">Back to Home</a></p>
 </body>
 </html>

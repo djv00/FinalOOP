@@ -1,4 +1,12 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="model.UserDTO"%>
+<%
+    UserDTO user = (UserDTO) session.getAttribute("user");
+    if (user == null || !"Operator".equals(user.getRole())) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,16 +14,15 @@
     <title>Operator Home</title>
 </head>
 <body>
-    <h1>Welcome, Operator ${sessionScope.user.name}</h1>
-    <p>Your role: Operator</p>
+    <h1>Welcome, Operator <%= user.getName() %></h1>
+    <p>Your role: <%= user.getRole() %></p>
 
-    <h2>Actions</h2>
+    <h2>Available Actions</h2>
     <ul>
-        <li><a href="breakLog.jsp">Log your break</a></li> <!-- Link to log break page -->
-
-        <li><a href="operatorDashboard.jsp">Go to Operator Dashboard</a></li> <!-- Link to operator dashboard -->
+        <li><a href="breakLog.jsp">Log a Break</a></li>
+        <li><a href="reportDashboard.jsp">View Performance Dashboard</a></li>
     </ul>
 
-    <a href="logout">Logout</a> <!-- Link to logout -->
+    <p><a href="logout">Logout</a></p>
 </body>
 </html>

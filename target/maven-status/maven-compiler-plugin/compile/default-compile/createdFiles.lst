@@ -3,6 +3,7 @@ model\VehicleDTO$Builder.class
 model\MaintenanceAlertDTO.class
 dao\VehicleDAOImpl.class
 dao\GpsTrackingDAOImpl.class
+servlet\VehicleRegisterServlet.class
 dao\UserDAO.class
 dao\UserDAOImpl.class
 servlet\GpsServlet.class
@@ -14,6 +15,7 @@ model\CostReportDTO.class
 strategy\StrategyFactory.class
 util\DBConnection.class
 observer\GpsSimulatorManager.class
+servlet\VehicleListServlet.class
 servlet\RegisterServlet.class
 servlet\FuelServlet.class
 servlet\UpdateScheduleServlet.class
@@ -41,6 +43,7 @@ dao\ReportDAO.class
 adapter\PerformanceReportAdapter.class
 dao\BreakDAO.class
 dao\MaintenanceDAOImpl.class
+servlet\FrontControllerServlet.class
 model\BreakDTO.class
 model\PerformanceLogDTO.class
 model\UserDTO.class

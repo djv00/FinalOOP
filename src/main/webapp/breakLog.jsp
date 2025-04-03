@@ -3,39 +3,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Operator Break Log</title>
+    <meta charset="UTF-8">
+    <title>Log Break</title>
 </head>
 <body>
-    <h2>Log Operator Break</h2>
+    <h2>Log a Break</h2>
 
     <c:if test="${not empty error}">
-        <p style="color: red;">${error}</p>
+        <p style="color: red">${error}</p>
     </c:if>
-
     <c:if test="${param.success eq 'true'}">
-        <p style="color: green;">Break logged successfully!</p>
+        <p style="color: green">Break successfully logged!</p>
     </c:if>
 
-    <form action="BreakServlet" method="post">
-        <label for="userId">User ID:</label>
-        <input type="number" name="userId" id="userId" required /><br/>
-
+    <form method="post" action="controller?action=logBreak">
         <label for="vehicleId">Vehicle ID:</label>
-        <input type="number" name="vehicleId" id="vehicleId" required /><br/>
+        <input type="number" name="vehicleId" required /><br><br>
 
-        <label for="breakStart">Break Start (yyyy-MM-dd HH:mm:ss):</label>
-        <input type="text" name="breakStart" id="breakStart" required /><br/>
+        <label for="breakStart">Break Start Time (yyyy-MM-dd HH:mm:ss):</label>
+        <input type="text" name="breakStart" required /><br><br>
 
-        <label for="breakEnd">Break End (yyyy-MM-dd HH:mm:ss):</label>
-        <input type="text" name="breakEnd" id="breakEnd" required /><br/>
+        <label for="breakEnd">Break End Time (yyyy-MM-dd HH:mm:ss):</label>
+        <input type="text" name="breakEnd" required /><br><br>
 
         <label for="lat">Latitude:</label>
-        <input type="text" name="lat" id="lat" required /><br/>
+        <input type="text" name="lat" required /><br><br>
 
         <label for="lng">Longitude:</label>
-        <input type="text" name="lng" id="lng" required /><br/>
+        <input type="text" name="lng" required /><br><br>
 
-        <input type="submit" value="Log Break" />
+        <!-- userId is auto-populated from session -->
+        <input type="hidden" name="userId" value="${sessionScope.user.id}" />
+
+        <button type="submit">Submit Break</button>
     </form>
+
+    <p><a href="controller?action=operatorHome">Back to Home</a></p>
 </body>
 </html>

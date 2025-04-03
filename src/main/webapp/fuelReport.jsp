@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,42 +7,51 @@
     <title>Fuel/Energy Usage Report</title>
 </head>
 <body>
-    <h1>Fuel/Energy Usage Report</h1>
-    <p>Below is the report showing fuel/energy usage data for each vehicle.</p>
+<h2>Fuel/Energy Usage Report</h2>
 
-    <!-- Example Table: Add real data here -->
+<form method="get" action="controller">
+    <input type="hidden" name="action" value="fuelReport" />
+    <label for="vehicleId">Select Vehicle:</label>
+    <select name="vehicleId" required>
+        <option value="">--Choose Vehicle--</option>
+        <c:forEach var="vehicle" items="${vehicleList}">
+            <option value="${vehicle.id}" ${vehicle.id == param.vehicleId ? 'selected' : ''}>
+                ${vehicle.vehicleNumber}
+            </option>
+        </c:forEach>
+    </select>
+    <button type="submit">View Report</button>
+</form>
+
+<c:if test="${not empty logs}">
     <table border="1">
         <thead>
-            <tr>
-                <th>Vehicle Number</th>
-                <th>Fuel Type</th>
-                <th>Distance (km)</th>
-                <th>Fuel/Energy Amount</th>
-                <th>Unit</th>
-                <th>Date</th>
-            </tr>
+        <tr>
+            <th>Amount</th>
+            <th>Unit</th>
+            <th>Distance (km)</th>
+            <th>Timestamp</th>
+            <th>Efficiency</th>
+        </tr>
         </thead>
         <tbody>
-            <!-- Example data, replace with dynamic content -->
+        <c:forEach var="entry" items="${logs}">
             <tr>
-                <td>BUS001</td>
-                <td>Diesel</td>
-                <td>150</td>
-                <td>45</td>
-                <td>litres</td>
-                <td>2025-04-01</td>
+                <td>${entry.log.amount}</td>
+                <td>${entry.log.unit}</td>
+                <td>${entry.log.distanceKm}</td>
+                <td>${entry.log.timestamp}</td>
+                <td><fmt:formatNumber value="${entry.efficiency}" maxFractionDigits="2"/></td>
             </tr>
-            <tr>
-                <td>LRT001</td>
-                <td>Electric</td>
-                <td>120</td>
-                <td>100</td>
-                <td>kWh</td>
-                <td>2025-04-02</td>
-            </tr>
+        </c:forEach>
         </tbody>
     </table>
+</c:if>
 
-    <a href="operatorHome.jsp">Back to Home</a> <!-- Link to go back to operator home page -->
+<c:if test="${empty logs && not empty param.vehicleId}">
+    <p>No data available for selected vehicle.</p>
+</c:if>
+
+<p><a href="controller?action=managerHome">Back to Home</a></p>
 </body>
 </html>
