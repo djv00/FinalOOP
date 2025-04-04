@@ -48,20 +48,22 @@ public class FrontControllerServlet extends HttpServlet {
             case "updateSchedule": destination = "UpdateScheduleServlet"; break;
             case "vehicleFormSubmit": destination = "VehicleRegisterServlet"; break;
             case "vehicleList": destination = "VehicleListServlet"; break;
+            case "maintenanceAlertServlet": destination = "MaintenanceAlertServlet"; break;
+
 
             // View-only JSPs
             case "managerHome": destination = "managerHome.jsp"; break;
             case "operatorHome": destination = "operatorHome.jsp"; break;
             case "breakLog": destination = "breakLog.jsp"; break;
-            case "fuelView": destination = "fuelReport.jsp"; break;
+            //case "fuelView": destination = "fuelReport.jsp"; break;
             case "gpsView": destination = "gpsView.jsp"; break;
             case "maintenanceAlert": destination = "maintenanceAlert.jsp"; break;
             case "maintenanceSchedule": destination = "maintenanceSchedule.jsp"; break;
-            case "reportDashboard": destination = "reportDashboard.jsp"; break;
+            //case "reportDashboard": destination = "reportDashboard.jsp"; break;
             case "vehicleForm": destination = "vehicleForm.jsp"; break;
 
-            case "registerPage": destination = "register.jsp"; break;
-            case "loginPage": destination = "login.jsp"; break;
+            //case "registerPage": destination = "register.jsp"; break;
+            //case "loginPage": destination = "login.jsp"; break;
             
 
             default:

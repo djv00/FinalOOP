@@ -12,8 +12,7 @@ import java.util.Random;
  *
  * Implements Observer Pattern for FR-03.
  * Each vehicle has its own simulator instance.
- *
- * Assumes stations are defined externally.
+ * Supports clean shutdown via 'running' flag.
  *
  * @author Kai Lu
  */
@@ -25,6 +24,7 @@ public class GpsSimulator implements Runnable {
 
     private double currentLat;
     private double currentLng;
+    private volatile boolean running = true; // 支持安全关闭
 
     public GpsSimulator(int vehicleId, double startLat, double startLng, GpsTrackingDAO dao) {
         this.vehicleId = vehicleId;
@@ -33,9 +33,13 @@ public class GpsSimulator implements Runnable {
         this.gpsDao = dao;
     }
 
+    public void stop() {
+        running = false;
+    }
+
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             try {
                 GpsLogDTO log = new GpsLogDTO();
                 log.setVehicleId(vehicleId);
@@ -45,11 +49,11 @@ public class GpsSimulator implements Runnable {
 
                 gpsDao.logVehicleLocation(log);
 
-                // Simulate slight movement
+                // 模拟小范围移动
                 currentLat += (random.nextDouble() - 0.5) * 0.001;
                 currentLng += (random.nextDouble() - 0.5) * 0.001;
 
-                Thread.sleep(5000); // wait 5 seconds between updates
+                Thread.sleep(5000); // 每5秒更新一次
             } catch (Exception e) {
                 e.printStackTrace();
                 break;

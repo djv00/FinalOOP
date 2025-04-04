@@ -31,11 +31,13 @@ servlet\LoginServlet.class
 dao\BreakDAOImpl.class
 strategy\ConsumptionStrategy.class
 dao\VehicleDAO.class
+servlet\MaintenanceAlertServlet.class
 adapter\MaintenanceScheduleAdapter.class
 dao\ReportDAOImpl.class
 model\MaintenanceScheduleDTO.class
 observer\MaintenanceMonitorManager.class
 observer\GpsSimulator.class
+listener\AppStartupListener.class
 servlet\ReportServlet.class
 servlet\ResolveAlertServlet.class
 dao\EnergyConsumptionDAO.class

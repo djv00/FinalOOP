@@ -12,12 +12,11 @@
 
     <h2>Actions</h2>
     <ul>
-        <li><a href="controller?action=reportDashboard">Go to Dashboard</a></li>
         <li><a href="controller?action=vehicleForm">Register a Vehicle</a></li>
         <li><a href="controller?action=gpsView">View GPS Tracking</a></li>
-        <li><a href="controller?action=fuelView">View Fuel/Energy Usage</a></li>
-        <li><a href="controller?action=maintenanceAlert">View Maintenance Alerts</a></li>
-        <li><a href="controller?action=maintenanceSchedule">Schedule Maintenance Tasks</a></li>
+        <li><a href="controller?action=fuelReport">View Fuel/Energy Usage</a></li>
+        <li><a href="controller?action=maintenanceAlertServlet">View Maintenance Alerts</a></li>
+        <li><a href="controller?action=updateSchedule">Schedule Maintenance Tasks</a></li>
         <li><a href="controller?action=report">View Cost & Performance Reports</a></li>
     </ul>
 

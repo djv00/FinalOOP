@@ -1,35 +1,55 @@
 package observer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Manager class that initializes maintenance monitoring threads
- * for each vehicle and its components.
- *
- * Acts as the Subject in Observer Pattern for FR-05.
- * Starts observer threads to simulate predictive maintenance detection.
- *
+ * Manages maintenance observer threads for all vehicles.
+ * Applies Observer Pattern for FR-05: Predictive Maintenance.
+ * Supports start and graceful stop for memory-safe shutdown.
+ * 
  * @author Kai Lu
  */
 public class MaintenanceMonitorManager {
 
+    private static final List<Thread> threads = new ArrayList<>();
+    private static final List<MaintenanceObserver> observers = new ArrayList<>();
+
+    /**
+     * Starts maintenance monitoring threads for predefined vehicles.
+     */
     public static void startMonitoring() {
         try {
-            // Vehicle 1: Diesel Bus
             String[] busComponents = {"brakes", "wheels", "axle bearings", "engine"};
-            Runnable observer1 = new MaintenanceObserver(1, busComponents);
-            new Thread(observer1).start();
-
-            // Vehicle 2: Electric Light Rail
             String[] lrtComponents = {"brakes", "wheels", "axle bearings", "catenary", "pantograph", "circuit breakers"};
-            Runnable observer2 = new MaintenanceObserver(2, lrtComponents);
-            new Thread(observer2).start();
-
-            // Vehicle 3: Diesel-Electric Train
             String[] trainComponents = {"brakes", "wheels", "axle bearings", "engine"};
-            Runnable observer3 = new MaintenanceObserver(3, trainComponents);
-            new Thread(observer3).start();
 
+            MaintenanceObserver observer1 = new MaintenanceObserver(1, busComponents);
+            MaintenanceObserver observer2 = new MaintenanceObserver(2, lrtComponents);
+            MaintenanceObserver observer3 = new MaintenanceObserver(3, trainComponents);
+
+            observers.add(observer1);
+            observers.add(observer2);
+            observers.add(observer3);
+
+            threads.add(new Thread(observer1));
+            threads.add(new Thread(observer2));
+            threads.add(new Thread(observer3));
+
+            for (Thread thread : threads) {
+                thread.start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-} 
+
+    /**
+     * Signals all monitoring threads to stop gracefully.
+     */
+    public static void stopAllMonitoring() {
+        for (MaintenanceObserver observer : observers) {
+            observer.stop();
+        }
+    }
+}

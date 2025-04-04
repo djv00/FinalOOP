@@ -33,7 +33,7 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
             ps.setString(2, alert.getComponent());
             ps.setDouble(3, alert.getUsageHours());
             ps.setTimestamp(4, alert.getAlertTime());
-            ps.setBoolean(5, alert.isResolved());
+            ps.setInt(5, alert.isResolved() ? 1 : 0); // 使用 1/0 替代 true/false
             ps.executeUpdate();
         }
     }
@@ -41,7 +41,7 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
     @Override
     public List<MaintenanceAlertDTO> getUnresolvedAlertsByVehicle(int vehicleId) throws Exception {
         List<MaintenanceAlertDTO> alerts = new ArrayList<>();
-        String sql = "SELECT * FROM maintenance_alerts WHERE vehicle_id = ? AND resolved = FALSE ORDER BY alert_time DESC";
+        String sql = "SELECT * FROM maintenance_alerts WHERE vehicle_id = ? AND resolved = 0 ORDER BY alert_time DESC";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, vehicleId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -55,7 +55,7 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
 
     @Override
     public void markAlertResolved(int alertId) throws Exception {
-        String sql = "UPDATE maintenance_alerts SET resolved = TRUE WHERE id = ?";
+        String sql = "UPDATE maintenance_alerts SET resolved = 1 WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, alertId);
             ps.executeUpdate();
@@ -69,15 +69,10 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
         alert.setComponent(rs.getString("component"));
         alert.setUsageHours(rs.getDouble("usage_hours"));
         alert.setAlertTime(rs.getTimestamp("alert_time"));
-        alert.setResolved(rs.getBoolean("resolved"));
+        alert.setResolved(rs.getInt("resolved") == 1); // 从 1 映射为 true
         return alert;
     }
 
-    /**
-     * Inserts a maintenance schedule.
-     * @param task maintenance task object
-     * @throws Exception if database operation fails
-     */
     public void insertSchedule(MaintenanceScheduleDTO task) throws Exception {
         String sql = "INSERT INTO maintenance_schedule (vehicle_id, task, scheduled_date, status) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -89,9 +84,6 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
         }
     }
 
-    /**
-     * Retrieves all scheduled maintenance tasks.
-     */
     public List<MaintenanceScheduleDTO> getAllSchedules() throws Exception {
         List<MaintenanceScheduleDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM maintenance_schedule ORDER BY scheduled_date DESC";
@@ -110,9 +102,6 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
         return list;
     }
 
-    /**
-     * Updates maintenance task status (e.g., to Completed).
-     */
     public void updateScheduleStatus(int scheduleId, String status) throws Exception {
         String sql = "UPDATE maintenance_schedule SET status = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -121,4 +110,4 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
             ps.executeUpdate();
         }
     }
-} 
+}

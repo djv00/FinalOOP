@@ -12,6 +12,7 @@ import java.util.Random;
  * Runs in background and mimics monitoring wear levels.
  *
  * Triggers alerts when component usage exceeds safe threshold.
+ * Supports clean shutdown via 'running' flag.
  *
  * Applies Observer Pattern for FR-05.
  *
@@ -23,6 +24,7 @@ public class MaintenanceObserver implements Runnable {
     private final String[] components;
     private final MaintenanceDAO dao;
     private final Random random = new Random();
+    private volatile boolean running = true; // 控制线程是否运行
 
     public MaintenanceObserver(int vehicleId, String[] components) throws Exception {
         this.vehicleId = vehicleId;
@@ -30,13 +32,17 @@ public class MaintenanceObserver implements Runnable {
         this.dao = new MaintenanceDAOImpl();
     }
 
+    public void stop() {
+        running = false;
+    }
+
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             try {
                 for (String component : components) {
-                    double usage = 800 + random.nextDouble() * 1000; // Simulate high usage
-                    if (usage > 1200) { // trigger alert if usage too high
+                    double usage = 800 + random.nextDouble() * 1000;
+                    if (usage > 1200) {
                         MaintenanceAlertDTO alert = new MaintenanceAlertDTO();
                         alert.setVehicleId(vehicleId);
                         alert.setComponent(component);
@@ -46,7 +52,7 @@ public class MaintenanceObserver implements Runnable {
                         dao.insertAlert(alert);
                     }
                 }
-                Thread.sleep(10000); // simulate periodic checking every 10 seconds
+                Thread.sleep(10000);
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
