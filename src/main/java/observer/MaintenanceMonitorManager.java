@@ -1,70 +1,165 @@
 package observer;
 
+import dao.VehicleDAO;
+import dao.VehicleDAOImpl;
+import model.VehicleDTO;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * Manages maintenance observer threads for all vehicles.
- * Applies Observer Pattern for FR-05: Predictive Maintenance.
- * Supports start and graceful stop for memory-safe shutdown.
+ * Manager for maintenance monitoring system.
+ * Creates and controls observers for all vehicles.
  * 
- * @author Kai Lu
+ * @author Jiangyu Dai
  */
 public class MaintenanceMonitorManager {
 
     private static final List<Thread> threads = new ArrayList<>();
     private static final List<MaintenanceObserver> observers = new ArrayList<>();
+    private static final Logger logger = Logger.getLogger(MaintenanceMonitorManager.class.getName());
 
     /**
-     * Starts maintenance monitoring threads for predefined vehicles.
+     * Starts maintenance monitoring for all vehicles
      */
     public static void startMonitoring() {
         try {
-            String[] busComponents = {"brakes", "wheels", "axle bearings", "engine"};
-            String[] lrtComponents = {"brakes", "wheels", "axle bearings", "catenary", "pantograph", "circuit breakers"};
-            String[] trainComponents = {"brakes", "wheels", "axle bearings", "engine"};
-
-            MaintenanceObserver observer1 = new MaintenanceObserver(1, busComponents);
-            MaintenanceObserver observer2 = new MaintenanceObserver(2, lrtComponents);
-            MaintenanceObserver observer3 = new MaintenanceObserver(3, trainComponents);
-
-            observers.add(observer1);
-            observers.add(observer2);
-            observers.add(observer3);
-
-            threads.add(new Thread(observer1));
-            threads.add(new Thread(observer2));
-            threads.add(new Thread(observer3));
-
-            for (Thread thread : threads) {
-                thread.start();
+            logger.info(String.format("[%s] User %s: Starting maintenance monitoring", 
+                "2025-04-06 17:09:47", "djv00"));
+            
+            // Get all vehicles from database
+            VehicleDAO vehicleDAO = new VehicleDAOImpl();
+            List<VehicleDTO> vehicles = vehicleDAO.getAllVehicles();
+            
+            if (vehicles == null || vehicles.isEmpty()) {
+                // Fallback to default vehicles if database has no vehicles
+                createDefaultObservers();
+            } else {
+                // Create observers for each vehicle from database
+                createObserversFromDatabase(vehicles);
             }
+            
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe(String.format("[%s] User %s: Failed to start monitoring: %s", 
+                "2025-04-06 17:09:47", "djv00", e.getMessage()));
+            // Fallback to default vehicles if database access fails
+            createDefaultObservers();
         }
     }
-
+    
     /**
-     * Signals all monitoring threads to stop gracefully.
+     * Creates observers for all vehicles from database
+     */
+    private static void createObserversFromDatabase(List<VehicleDTO> vehicles) {
+        try {
+            for (VehicleDTO vehicle : vehicles) {
+                // Get components based on vehicle type
+                String[] components = getComponentsForType(vehicle.getVehicleType());
+                
+                // Create and start observer
+                MaintenanceObserver observer = new MaintenanceObserver(
+                    vehicle.getId(), 
+                    vehicle.getVehicleType(), 
+                    components
+                );
+                
+                startObserver(observer);
+            }
+            
+            logger.info(String.format("[%s] User %s: Started monitoring for %d vehicles", 
+                "2025-04-06 17:09:47", "djv00", observers.size()));
+        } catch (Exception e) {
+            logger.severe(String.format("[%s] User %s: Error creating observers: %s", 
+                "2025-04-06 17:09:47", "djv00", e.getMessage()));
+        }
+    }
+    
+    /**
+     * Creates default observers if database access fails
+     */
+    private static void createDefaultObservers() {
+        try {
+            logger.info(String.format("[%s] User %s: Using default vehicles", 
+                "2025-04-06 17:09:47", "djv00"));
+            
+            // Create three default observers for different vehicle types
+            MaintenanceObserver bus = new MaintenanceObserver(
+                1, "Bus", 
+                new String[]{"brakes", "wheels", "axle bearings", "engine"}
+            );
+            
+            MaintenanceObserver lightRail = new MaintenanceObserver(
+                2, "Light Rail", 
+                new String[]{"brakes", "wheels", "axle bearings", "catenary", "pantograph", "circuit breakers"}
+            );
+            
+            MaintenanceObserver train = new MaintenanceObserver(
+                3, "Train", 
+                new String[]{"brakes", "wheels", "axle bearings", "engine", "transmission"}
+            );
+            
+            // Start observers
+            startObserver(bus);
+            startObserver(lightRail);
+            startObserver(train);
+            
+        } catch (Exception e) {
+            logger.severe(String.format("[%s] User %s: Failed to create default observers: %s", 
+                "2025-04-06 17:09:47", "djv00", e.getMessage()));
+        }
+    }
+    
+    /**
+     * Gets appropriate components to monitor based on vehicle type
+     */
+    private static String[] getComponentsForType(String vehicleType) {
+        if ("Bus".equals(vehicleType)) {
+            return new String[]{"brakes", "wheels", "axle bearings", "engine"};
+        } else if ("Light Rail".equals(vehicleType)) {
+            return new String[]{"brakes", "wheels", "axle bearings", "catenary", "pantograph", "circuit breakers"};
+        } else if ("Train".equals(vehicleType)) {
+            return new String[]{"brakes", "wheels", "axle bearings", "engine", "transmission"};
+        } else {
+            return new String[]{"brakes", "wheels", "engine"}; // Default components
+        }
+    }
+    
+    /**
+     * Starts an observer in a new thread
+     */
+    private static void startObserver(MaintenanceObserver observer) {
+        observers.add(observer);
+        Thread thread = new Thread(observer);
+        thread.setName("MaintenanceObserver-" + observer.getVehicleId());
+        threads.add(thread);
+        thread.start();
+    }
+    
+    /**
+     * Stops all monitoring threads
      */
     public static void stopAllMonitoring() {
         for (MaintenanceObserver observer : observers) {
             observer.stop();
         }
+        logger.info(String.format("[%s] User %s: All maintenance monitoring stopped", 
+            "2025-04-06 17:09:47", "djv00"));
     }
     
-     /**
-     * Resets the component alert flag in the appropriate observer.
-     * Called when an alert is resolved.
-     * 
-     * @param vehicleId ID of the vehicle
-     * @param component Name of the component
+    /**
+     * Resets component alert for a specific vehicle
      */
     public static void resetComponentAlert(int vehicleId, String component) {
-        // vehicleId is 1-based, observers list is 0-based
-        int index = vehicleId - 1;
-        if (index >= 0 && index < observers.size()) {
-            observers.get(index).resetComponentAlert(component);
+        // Find the observer for this vehicle
+        for (MaintenanceObserver observer : observers) {
+            if (observer.getVehicleId() == vehicleId) {
+                observer.resetComponentAlert(component);
+                return;
+            }
         }
+        
+        logger.warning(String.format("[%s] User %s: No observer found for vehicle %d", 
+            "2025-04-06 17:09:47", "djv00", vehicleId));
     }
 }

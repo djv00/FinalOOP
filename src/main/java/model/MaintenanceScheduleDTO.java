@@ -9,7 +9,7 @@ import java.sql.Date;
  * Fields: id, vehicleId, task, scheduledDate, status
  * Used in FR-05 for scheduling future vehicle maintenance.
  *
- * @author Kai Lu
+ * @author Jiangyu Dai
  */
 public class MaintenanceScheduleDTO {
     private int id;
@@ -17,6 +17,8 @@ public class MaintenanceScheduleDTO {
     private String task;
     private Date scheduledDate;
     private String status; // Scheduled, Completed, No Need
+    private String vehicleNumber; // Added to store vehicle number from join
+    private String vehicleType;   // Added to store vehicle type from join
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -32,4 +34,11 @@ public class MaintenanceScheduleDTO {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    
+    // Getters and setters for additional properties
+    public String getVehicleNumber() { return vehicleNumber; }
+    public void setVehicleNumber(String vehicleNumber) { this.vehicleNumber = vehicleNumber; }
+    
+    public String getVehicleType() { return vehicleType; }
+    public void setVehicleType(String vehicleType) { this.vehicleType = vehicleType; }
 }

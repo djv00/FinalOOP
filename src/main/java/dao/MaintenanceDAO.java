@@ -1,6 +1,7 @@
 package dao;
 
 import model.MaintenanceAlertDTO;
+import model.MaintenanceScheduleDTO;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  *
  * Used by observer modules to trigger or retrieve alerts.
  *
- * @author Kai Lu
+ * @author Jiangyu Dai
  */
 public interface MaintenanceDAO {
 
@@ -27,6 +28,14 @@ public interface MaintenanceDAO {
      * @throws Exception if database operation fails
      */
     List<MaintenanceAlertDTO> getUnresolvedAlertsByVehicle(int vehicleId) throws Exception;
+    
+    /**
+     * Retrieves all alerts (both resolved and unresolved) for a specific vehicle.
+     * @param vehicleId vehicle ID
+     * @return list of all alerts
+     * @throws Exception if database operation fails
+     */
+    List<MaintenanceAlertDTO> getAllAlertsByVehicle(int vehicleId) throws Exception;
 
     /**
      * Marks a specific alert as resolved.
@@ -42,4 +51,26 @@ public interface MaintenanceDAO {
      * @throws Exception if database operation fails
      */
     MaintenanceAlertDTO getAlertById(int alertId) throws Exception;
+    
+    /**
+     * Inserts a new maintenance schedule.
+     * @param schedule the schedule to insert
+     * @throws Exception if database operation fails
+     */
+    void insertSchedule(MaintenanceScheduleDTO schedule) throws Exception;
+    
+    /**
+     * Updates the status of a maintenance schedule.
+     * @param scheduleId ID of the schedule to update
+     * @param status new status
+     * @throws Exception if database operation fails
+     */
+    void updateScheduleStatus(int scheduleId, String status) throws Exception;
+    
+    /**
+     * Retrieves all maintenance schedules.
+     * @return list of all maintenance schedules
+     * @throws Exception if database operation fails
+     */
+    List<MaintenanceScheduleDTO> getAllSchedules() throws Exception;
 }

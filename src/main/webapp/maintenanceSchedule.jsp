@@ -6,6 +6,12 @@
     <meta charset="UTF-8">
     <title>Maintenance Scheduling</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Simple spacing adjustment for table */
+        .table th, .table td {
+            padding: 8px 12px;  /* Slightly increase padding */
+        }
+    </style>
 </head>
 <body>
     <h1>Maintenance Scheduling</h1>
@@ -26,11 +32,17 @@
         <div class="card-body">
             <form action="ScheduleTaskServlet" method="post">
                 <div class="form-group">
-                    <label for="vehicleId">Vehicle ID:</label>
+                    <label for="vehicleId">Vehicle:</label>
                     <select name="vehicleId" id="vehicleId" class="form-control" required>
-                        <option value="1">Vehicle 1 (Bus)</option>
-                        <option value="2">Vehicle 2 (Light Rail)</option>
-                        <option value="3">Vehicle 3 (Train)</option>
+                        <c:forEach var="vehicle" items="${vehicles}">
+                            <option value="${vehicle.id}">${vehicle.vehicleNumber} (${vehicle.vehicleType})</option>
+                        </c:forEach>
+                        <c:if test="${empty vehicles}">
+                            <!-- Fallback options if vehicles not loaded -->
+                            <option value="1">Vehicle 1 (Bus)</option>
+                            <option value="2">Vehicle 2 (Light Rail)</option>
+                            <option value="3">Vehicle 3 (Train)</option>
+                        </c:if>
                     </select>
                 </div>
                 
@@ -49,6 +61,11 @@
         </div>
     </div>
     
+    <!-- Debug info - will help identify if schedules are being loaded -->
+    <!-- 
+    <p>Debug: Found ${schedules.size()} schedules</p>
+    -->
+    
     <!-- Maintenance Schedule Table -->
     <div class="card">
         <div class="card-header">
@@ -59,7 +76,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Vehicle ID</th>
+                        <th>Vehicle</th>
                         <th>Task</th>
                         <th>Scheduled Date</th>
                         <th>Status</th>
@@ -70,7 +87,7 @@
                     <c:forEach var="schedule" items="${schedules}">
                         <tr>
                             <td>${schedule.id}</td>
-                            <td>${schedule.vehicleId}</td>
+                            <td>${schedule.vehicleNumber} (${schedule.vehicleType})</td>
                             <td>${schedule.task}</td>
                             <td>${schedule.scheduledDate}</td>
                             <td>${schedule.status}</td>
