@@ -2,6 +2,8 @@ package servlet;
 
 import dao.MaintenanceDAO;
 import dao.MaintenanceDAOImpl;
+import model.MaintenanceAlertDTO;
+import observer.MaintenanceMonitorManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,12 +36,23 @@ public class ResolveAlertServlet extends HttpServlet {
             try {
                 int alertId = Integer.parseInt(idParam);
                 MaintenanceDAO dao = new MaintenanceDAOImpl();
+                
+                // Get alert details before marking as resolved
+                MaintenanceAlertDTO alert = dao.getAlertById(alertId);
+                
+                // Mark alert as resolved in database
                 dao.markAlertResolved(alertId);
+                
+                // Reset component alert flag in observer
+                if (alert != null) {
+                    MaintenanceMonitorManager.resetComponentAlert(
+                        alert.getVehicleId(), alert.getComponent());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        response.sendRedirect("maintenanceAlert.jsp");
+        response.sendRedirect("controller?action=maintenanceAlertServlet");
     }
 }

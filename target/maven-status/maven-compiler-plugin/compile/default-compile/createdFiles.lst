@@ -1,3 +1,4 @@
+servlet\ScheduleTaskServlet.class
 observer\MaintenanceObserver.class
 model\VehicleDTO$Builder.class
 model\MaintenanceAlertDTO.class
@@ -17,6 +18,7 @@ util\DBConnection.class
 observer\GpsSimulatorManager.class
 servlet\VehicleListServlet.class
 servlet\RegisterServlet.class
+adapter\MaintenanceAlertAdapter.class
 servlet\FuelServlet.class
 servlet\UpdateScheduleServlet.class
 servlet\LogoutServlet.class
@@ -32,6 +34,7 @@ dao\BreakDAOImpl.class
 strategy\ConsumptionStrategy.class
 dao\VehicleDAO.class
 servlet\MaintenanceAlertServlet.class
+servlet\MaintenanceScheduleServlet.class
 adapter\MaintenanceScheduleAdapter.class
 dao\ReportDAOImpl.class
 model\MaintenanceScheduleDTO.class

@@ -52,4 +52,19 @@ public class MaintenanceMonitorManager {
             observer.stop();
         }
     }
+    
+     /**
+     * Resets the component alert flag in the appropriate observer.
+     * Called when an alert is resolved.
+     * 
+     * @param vehicleId ID of the vehicle
+     * @param component Name of the component
+     */
+    public static void resetComponentAlert(int vehicleId, String component) {
+        // vehicleId is 1-based, observers list is 0-based
+        int index = vehicleId - 1;
+        if (index >= 0 && index < observers.size()) {
+            observers.get(index).resetComponentAlert(component);
+        }
+    }
 }

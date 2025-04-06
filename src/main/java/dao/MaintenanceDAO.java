@@ -34,4 +34,12 @@ public interface MaintenanceDAO {
      * @throws Exception if database operation fails
      */
     void markAlertResolved(int alertId) throws Exception;
+    
+    /**
+     * Gets a specific alert by its ID.
+     * @param alertId alert ID to retrieve
+     * @return the alert or null if not found
+     * @throws Exception if database operation fails
+     */
+    MaintenanceAlertDTO getAlertById(int alertId) throws Exception;
 }

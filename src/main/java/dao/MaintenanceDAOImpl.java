@@ -33,7 +33,7 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
             ps.setString(2, alert.getComponent());
             ps.setDouble(3, alert.getUsageHours());
             ps.setTimestamp(4, alert.getAlertTime());
-            ps.setInt(5, alert.isResolved() ? 1 : 0); // 使用 1/0 替代 true/false
+            ps.setInt(5, alert.isResolved() ? 1 : 0); 
             ps.executeUpdate();
         }
     }
@@ -69,7 +69,7 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
         alert.setComponent(rs.getString("component"));
         alert.setUsageHours(rs.getDouble("usage_hours"));
         alert.setAlertTime(rs.getTimestamp("alert_time"));
-        alert.setResolved(rs.getInt("resolved") == 1); // 从 1 映射为 true
+        alert.setResolved(rs.getInt("resolved") == 1); 
         return alert;
     }
 
@@ -109,5 +109,20 @@ public class MaintenanceDAOImpl implements MaintenanceDAO {
             ps.setInt(2, scheduleId);
             ps.executeUpdate();
         }
+    }
+    
+
+    @Override
+    public MaintenanceAlertDTO getAlertById(int alertId) throws Exception {
+        String sql = "SELECT * FROM maintenance_alerts WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, alertId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return fromAlertResultSet(rs);
+                }
+            }
+        }
+        return null;
     }
 }

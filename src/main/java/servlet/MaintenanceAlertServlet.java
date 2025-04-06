@@ -39,9 +39,32 @@ public class MaintenanceAlertServlet extends HttpServlet {
             request.setAttribute("alerts", allAlerts);
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("error", "Failed to retrieve alerts: " + e.getMessage());
             request.setAttribute("alerts", new ArrayList<MaintenanceAlertDTO>());
         }
 
         request.getRequestDispatcher("maintenanceAlert.jsp").forward(request, response);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+            
+        String action = request.getParameter("action");
+        
+        if ("resolve".equals(action)) {
+            try {
+                int alertId = Integer.parseInt(request.getParameter("alertId"));
+                MaintenanceDAO dao = new MaintenanceDAOImpl();
+                dao.markAlertResolved(alertId);
+                request.setAttribute("message", "Alert marked as resolved successfully");
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("error", "Failed to resolve alert: " + e.getMessage());
+            }
+        }
+        
+        // Redirect to doGet to refresh the alerts list
+        doGet(request, response);
     }
 }

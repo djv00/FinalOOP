@@ -36,4 +36,15 @@ public class PerformanceLogDTO {
 
     public double getEfficiencyScore() { return efficiencyScore; }
     public void setEfficiencyScore(double efficiencyScore) { this.efficiencyScore = efficiencyScore; }
+    
+    /**
+     * Determines if arrival was on time.
+     * @return true if arrived on or before scheduled time
+     */
+    public boolean isOnTime() {
+        if (scheduledArrival == null || actualArrival == null) {
+            return false;
+        }
+        return actualArrival.compareTo(scheduledArrival) <= 0;
+    }
 }
